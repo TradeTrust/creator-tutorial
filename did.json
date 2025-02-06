@@ -1,0 +1,27 @@
+{
+  "id": "did:web:massive-steadily-crane.ngrok-free.app",
+  "verificationMethod": [
+    {
+      "type": "Bls12381G2Key2020",
+      "id": "did:web:massive-steadily-crane.ngrok-free.app#keys-1",
+      "controller": "did:web:massive-steadily-crane.ngrok-free.app",
+      "publicKeyBase58": "oCBKQMT7T7PFje1KaApEHYwe9ofrmsdyBMqmMgBJxVRiqNjuGChd1HoZzakrJGZh1x6uFRXRJB8PL2U8aStKCtnH2iLf5ZAC6rRSbj9DiW7aK7Ru3v7LRMCjdcteE7UTj8R"
+    }
+  ],
+  "@context": [
+    "https://www.w3.org/ns/did/v1",
+    "https://w3id.org/security/suites/bls12381-2020/v1"
+  ],
+  "authentication": [
+    "did:web:massive-steadily-crane.ngrok-free.app#keys-1"
+  ],
+  "assertionMethod": [
+    "did:web:massive-steadily-crane.ngrok-free.app#keys-1"
+  ],
+  "capabilityInvocation": [
+    "did:web:massive-steadily-crane.ngrok-free.app#keys-1"
+  ],
+  "capabilityDelegation": [
+    "did:web:massive-steadily-crane.ngrok-free.app#keys-1"
+  ]
+}

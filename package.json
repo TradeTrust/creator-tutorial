@@ -1,0 +1,38 @@
+{
+  "name": "creator-tutorial",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
+    "start": "node dist/index.js",
+    "dev": "nodemon",
+    "script:generateDidWeb": "dotenv -e .env npx ts-node ./scripts/generateDidWeb.ts",
+    "script:deployTokenRegistry": "dotenv -e .env npx ts-node ./scripts/deployTokenRegistry.ts"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "description": "",
+  "dependencies": {
+    "@ngrok/ngrok": "^1.4.1",
+    "@trustvc/trustvc": "^1.2.4",
+    "dotenv": "^16.4.7",
+    "ethers": "^6.13.5",
+    "express": "^4.21.2"
+  },
+  "engines": {
+    "npm": ">=8.3.0",
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.13.1",
+    "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3",
+    "dotenv-cli": "^8.0.0",
+    "nodemon": "^3.1.9",
+    "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.10",
+    "typescript": "^5.7.3"
+  }
+}
