@@ -2,7 +2,7 @@
 
 ## Overview
 
-TradeTrust Creator Tutorial is a guide to help developers understand and implement TradeTrust's document creation process. This tutorial provides step-by-step instructions for creating, deploying, and managing verifiable documents using the TradeTrust framework.
+TradeTrust Creator Tutorial is a guide to help developers understand and implement TradeTrust's document creation process. This tutorial provides step-by-step instructions for creating, deploying, and managing transferable documents using the TradeTrust framework.
 
 ## Prerequisites
 
