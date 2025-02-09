@@ -38,8 +38,8 @@ const SUPPORTED_DOCUMENT: {
   [key: string]: string;
 } = {
   "BILL_OF_LADING": "https://schemata.openattestation.com/io/tradetrust/bill-of-lading/1.0/bill-of-lading-context.json",
-  // "INOVICE": "https://schemata.openattestation.com/io/tradetrust/invoice/1.0/invoice-context.json",
-  // "CERTIFIATE_OF_ORIGIN": "https://schemata.openattestation.com/io/tradetrust/certificate-of-origin/1.0/certificate-of-origin-context.json"
+  // "INVOICE": "https://schemata.openattestation.com/io/tradetrust/invoice/1.0/invoice-context.json",
+  // "CERTIFICATE_OF_ORIGIN": "https://schemata.openattestation.com/io/tradetrust/certificate-of-origin/1.0/certificate-of-origin-context.json"
 }
 
 app.post("/create/:documentId", async (req: Request, res: Response, next: NextFunction) => {
@@ -73,7 +73,7 @@ app.post("/create/:documentId", async (req: Request, res: Response, next: NextFu
 
     // Get environment variables
     const SYSTEM_TOKEN_REGISTRY_ADDRESS = process.env.TOKEN_REGISTRY_ADDRESS;
-    const CHAINID: CHAIN_ID = process.env.NET as CHAIN_ID ?? CHAIN_ID.stabilitytestnet;
+    const CHAINID: CHAIN_ID = process.env.NET as CHAIN_ID ?? CHAIN_ID.amoy;
     const CHAININFO = SUPPORTED_CHAINS[CHAINID];
     // Remove escaped characters before parsing
     const cleanedJsonString = process.env.DID_KEY_PAIRS.replace(/\\(?=["])/g, '');
@@ -130,7 +130,11 @@ app.post("/create/:documentId", async (req: Request, res: Response, next: NextFu
       provider = new (ethers as any).providers.JsonRpcProvider(CHAININFO.rpcUrl);
     }
     const wallet = unconnectedWallet.connect(provider);
-    const tokenRegistry = TradeTrustToken__factory.connect(SYSTEM_TOKEN_REGISTRY_ADDRESS, wallet);
+    const tokenRegistry = new ethers.Contract(
+      SYSTEM_TOKEN_REGISTRY_ADDRESS,
+      TradeTrustToken__factory.abi,
+      wallet
+    );
 
     // Encrypt remarks
     const encryptedRemarks = remarks && encrypt(remarks ?? '', signedW3CDocument?.id!) || '0x'
@@ -142,7 +146,7 @@ app.post("/create/:documentId", async (req: Request, res: Response, next: NextFu
       console.error(error);
       throw new Error('Failed to mint token');
     }
-    let tx: ethers.ContractTransactionResponse;
+    let tx;
     // query gas station
     if (CHAININFO.gasStation) {
       const gasFees = await CHAININFO.gasStation();
