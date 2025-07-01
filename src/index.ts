@@ -37,9 +37,9 @@ app.get("/.well-known/did.json", (req: Request, res: Response, next: NextFunctio
 const SUPPORTED_DOCUMENT: {
   [key: string]: string;
 } = {
-  "BILL_OF_LADING": "https://schemata.openattestation.com/io/tradetrust/bill-of-lading/1.0/bill-of-lading-context.json",
-  // "INVOICE": "https://schemata.openattestation.com/io/tradetrust/invoice/1.0/invoice-context.json",
-  // "CERTIFICATE_OF_ORIGIN": "https://schemata.openattestation.com/io/tradetrust/certificate-of-origin/1.0/certificate-of-origin-context.json"
+  BILL_OF_LADING: "https://trustvc.io/context/bill-of-lading.json",
+  // "INVOICE": "https://trustvc.io/context/invoice.json",
+  // "CERTIFICATE_OF_ORIGIN": "https://trustvc.io/context/coo.json"
 }
 
 app.post("/create/:documentId", async (req: Request, res: Response, next: NextFunction) => {
