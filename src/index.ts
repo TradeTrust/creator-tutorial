@@ -1,5 +1,5 @@
 import ngrok from "@ngrok/ngrok";
-import { CHAIN_ID, encrypt, getTokenId, signW3C, SUPPORTED_CHAINS } from "@trustvc/trustvc";
+import { CHAIN_ID, encrypt, getTokenId, SUPPORTED_CHAINS, DocumentBuilder, W3CTransferableRecordsConfig } from "@trustvc/trustvc";
 import { TradeTrustToken__factory } from "@trustvc/trustvc/token-registry-v5/contracts";
 import { CredentialSubjects } from "@trustvc/trustvc/w3c/vc";
 import dotenv from "dotenv";
@@ -75,50 +75,47 @@ app.post("/create/:documentId", async (req: Request, res: Response, next: NextFu
     const SYSTEM_TOKEN_REGISTRY_ADDRESS = process.env.TOKEN_REGISTRY_ADDRESS;
     const CHAINID: CHAIN_ID = process.env.NET as CHAIN_ID ?? CHAIN_ID.amoy;
     const CHAININFO = SUPPORTED_CHAINS[CHAINID];
+    const RPC_PROVIDER_URL = CHAININFO.rpcUrl!
     // Remove escaped characters before parsing
     const cleanedJsonString = process.env.DID_KEY_PAIRS.replace(/\\(?=["])/g, '');
     const DID_KEY_PAIRS = JSON.parse(cleanedJsonString);
 
     // Prepare the document
-    const issuanceDate = new Date();
     const expirationDate = new Date();
     expirationDate.setMonth(expirationDate.getMonth() + 3);
-    const document = {
+    const credentialStatus: W3CTransferableRecordsConfig = {
+      chain: CHAININFO.currency,
+      chainId: Number(CHAINID),
+      tokenRegistry: SYSTEM_TOKEN_REGISTRY_ADDRESS,
+      rpcProviderUrl: RPC_PROVIDER_URL
+    };
+
+    // create a base document with the required context
+    const baseDocument = {
       "@context": [
-        "https://www.w3.org/2018/credentials/v1",
-        "https://w3id.org/security/bbs/v1",
-        "https://trustvc.io/context/transferable-records-context.json",
-        "https://trustvc.io/context/render-method-context.json",
-        "https://trustvc.io/context/attachments-context.json",
         SUPPORTED_DOCUMENT[documentId],
-      ],
-      type: ["VerifiableCredential"],
-      "credentialStatus": {
-        "type": "TransferableRecords",
-        "tokenNetwork": {
-          "chain": CHAININFO.currency,
-          "chainId": CHAINID
-        },
-        "tokenRegistry": SYSTEM_TOKEN_REGISTRY_ADDRESS,
-      },
-      "renderMethod": [
-        {
-          "id": "https://generic-templates.tradetrust.io",
-          "type": "EMBEDDED_RENDERER",
-          "templateName": documentId
-        }
-      ],
-      credentialSubject,
-      "issuanceDate": issuanceDate.toISOString(),
-      "expirationDate": expirationDate.toISOString(),
-      "issuer": DID_KEY_PAIRS.id?.split('#')?.[0],
-    }
+        "https://trustvc.io/context/attachments-context.json",
+      ]
+    };
+
+    const document = new DocumentBuilder(baseDocument);
+
+    // Add tranferable record configuration
+    document.credentialStatus(credentialStatus);
+    // Add the actual document content/data about the asset
+    document.credentialSubject(credentialSubject);
+    // Set when this document expires
+    document.expirationDate(expirationDate);
+    // Define how the document should be rendered visually (template and renderer)
+    document.renderMethod({
+      id: "https://generic-templates.tradetrust.io",
+      type: "EMBEDDED_RENDERER",
+      templateName: documentId
+    }); 
+
 
     // Sign the document
-    const { error, signed: signedW3CDocument } = await signW3C(document, DID_KEY_PAIRS);
-    if (error) {
-      throw new Error(error);
-    }
+    const signedW3CDocument = await document.sign(DID_KEY_PAIRS);
 
     // Issue the document on chain:
     const tokenId = getTokenId(signedW3CDocument!);
