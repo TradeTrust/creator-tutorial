@@ -1,15 +1,14 @@
-import { generateKeyPair, issueDID, VerificationType } from "@trustvc/trustvc/w3c/issuer";
+import { issuer } from "@trustvc/trustvc";
 import { writeFileSync } from "fs";
 import { join } from "path";
 import { writeEnvVariable } from "./utils";
 
+const { issueDID, CryptoSuite } = issuer;
+
 const main = async () => {
-  const keyPair = await generateKeyPair({
-    type: VerificationType.Bls12381G2Key2020
-  });
   const issuedDidWeb = await issueDID({
     domain: process.env.DOMAIN,
-    ...keyPair
+    type: CryptoSuite.EcdsaSd2023,
   });
 
   // Write the wellKnownDid to a JSON file

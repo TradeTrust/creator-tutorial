@@ -6,7 +6,7 @@ TradeTrust Creator Tutorial is a guide to help developers understand and impleme
 
 ## Prerequisites
 
-- Node.js (v18 or higher)
+- Node.js (v20 or higher)
 - npm
 - Basic understanding of blockchain technology and smart contracts
 
